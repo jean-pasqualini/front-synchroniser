@@ -1,0 +1,10 @@
+# Configuration file for sync content
+template: "demo.html"
+container: ".list-panel"
+output: "outputdemo.html.twig"
+
+dom:
+  1:
+    selector: ".panel-heading, .panel-footer"
+    content: |
+      {{ "kcab ertit noM" | reverse }} {% for i in 1..5 %} {{ i }} {% endfor %}

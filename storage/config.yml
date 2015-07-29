@@ -1,0 +1,3 @@
+staticdir: "static"
+outputdir: "output"
+fsdir: "fs-files"
