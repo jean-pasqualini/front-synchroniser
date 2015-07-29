@@ -1,10 +1,15 @@
 # Configuration file for sync content
 template: "demo.html"
-container: ".container"
-output: "outputdemo.html.twig"
+container: "html"
 
 dom:
   1:
     selector: ".list-panel"
     content: |
-      {% include fscompile("::default/panel-item.fs.yml") %}
+      {% for profile in profiles %}
+        {% include fscompile("::default/panel-item.fs.yml") %}
+      {% endfor %}
+
+  2:
+    selector: ".count span"
+    content: "{{ profiles | length }}"

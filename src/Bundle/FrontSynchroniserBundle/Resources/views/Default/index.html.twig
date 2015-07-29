@@ -1,1 +1,39 @@
-Hello {{ name }}!
+<!DOCTYPE html>
+<html>
+<head>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+</head>
+
+<body>
+<div class="container">
+
+    <div class="col-xs-3">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Templates
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-pills nav-stacked">
+                    {% for item in list %}
+                        <li>
+                            <a href="{{ path("debug_frontsynchroniser_showtemplate", {name: item}) }}" target="right">{{ item }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-9">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Affichage
+            </div>
+            <div class="panel-body">
+                <iframe src="" class="col-xs-12" frameborder="0" name="right" style="height: 600px;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

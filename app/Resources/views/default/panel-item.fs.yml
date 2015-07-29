@@ -1,10 +1,9 @@
 # Configuration file for sync content
 template: "demo.html"
-container: "ul"
-output: "outputdemo.html.twig"
+container: "ul > li"
 
 dom:
   1:
-    selector: ".panel-heading, .panel-footer"
+    selector: ".panel-heading"
     content: |
-      super
+      {{ profile.name }}

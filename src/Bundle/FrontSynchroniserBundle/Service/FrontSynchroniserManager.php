@@ -79,7 +79,7 @@ class FrontSynchroniserManager {
 
         if(!$edit)
         {
-            return $htmlObject->getHtml();
+            return $containerObject->getHtml();
         }
         else
         {
