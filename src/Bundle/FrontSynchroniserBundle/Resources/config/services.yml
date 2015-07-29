@@ -1,0 +1,19 @@
+services:
+    front_synchroniser.path_resolver.symfony:
+        class: FrontSynchroniser\PathResolver\SymfonyPathResolver
+        arguments: [@templating.name_parser, @templating.locator]
+    front_synchroniser.manager:
+        class: FrontSynchroniserBundle\Service\FrontSynchroniserManager
+        arguments: [%front_synchroniser%, @front_synchroniser.path_resolver.symfony]
+
+    front_synchroniser.twig.loader.filesystem:
+        class: %twig.loader.filesystem.class%
+        arguments: [@templating.locator, @templating.name_parser]
+        tags:
+            - { name: twig.loader }
+
+    twig.extension.front_synchroniser:
+        class: FrontSynchroniserBundle\Twig\Extension\FrontSynchroniserExtension
+        arguments: [@front_synchroniser.manager]
+        tags:
+            - { name: twig.extension }

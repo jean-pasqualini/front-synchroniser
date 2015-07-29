@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use FrontSynchroniserManager;
 
 class DefaultController extends Controller
 {
@@ -13,6 +14,9 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('default/index.html.twig');
+        /** @var FrontSynchroniserManager $frontSynchroniserManager */
+        $frontSynchroniserManager = $this->get("front_synchroniser.manager");
+
+        return $this->render($frontSynchroniserManager->compile('::default/index.fs.yml'));
     }
 }

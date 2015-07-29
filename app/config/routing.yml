@@ -1,3 +1,7 @@
+front_synchroniser:
+    resource: "@FrontSynchroniserBundle/Resources/config/routing.yml"
+    prefix:   /
+
 app:
     resource: "@AppBundle/Controller/"
     type:     annotation

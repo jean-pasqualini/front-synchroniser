@@ -1,0 +1,10 @@
+# Configuration file for sync content
+template: "demo.html"
+container: "ul"
+output: "outputdemo.html.twig"
+
+dom:
+  1:
+    selector: ".panel-heading, .panel-footer"
+    content: |
+      super

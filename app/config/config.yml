@@ -8,6 +8,11 @@ imports:
 parameters:
     locale: en
 
+front_synchroniser:
+    staticdir: "%kernel.root_dir%/Resources/static/"
+    outputdir: "%kernel.cache_dir%"
+    fsdir: "fs-files"
+
 framework:
     #esi:             ~
     #translator:      { fallbacks: ["%locale%"] }

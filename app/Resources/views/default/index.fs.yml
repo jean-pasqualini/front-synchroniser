@@ -1,0 +1,10 @@
+# Configuration file for sync content
+template: "demo.html"
+container: ".container"
+output: "outputdemo.html.twig"
+
+dom:
+  1:
+    selector: ".list-panel"
+    content: |
+      {% include fscompile("::default/panel-item.fs.yml") %}

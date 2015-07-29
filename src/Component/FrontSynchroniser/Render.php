@@ -1,5 +1,7 @@
 <?php
 
+namespace FrontSynchroniser;
+
 class Render {
 
     protected $uniq;
