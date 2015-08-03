@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-<!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-</head>
+{% extends "FrontSynchroniserBundle::layout.html.twig" %}
 
-<body>
-<div class="container">
-
+{% block frontsynchroniser_body %}
     <div class="col-xs-3">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -34,6 +27,4 @@
             </div>
         </div>
     </div>
-</div>
-</body>
-</html>
+{% endblock %}

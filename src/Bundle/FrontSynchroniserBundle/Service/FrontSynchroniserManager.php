@@ -53,7 +53,7 @@ class FrontSynchroniserManager {
         return file_get_contents($this->configuration["staticdir"].DIRECTORY_SEPARATOR.$configuration["template"]);
     }
 
-    protected function render($sourcePath)
+    public function getMetadataFromPath($sourcePath)
     {
         $source = file_get_contents($sourcePath);
 
@@ -62,8 +62,15 @@ class FrontSynchroniserManager {
         }
         catch (ParseException $e)
         {
-            return $source;
+            return null;
         }
+    }
+
+    protected function render($sourcePath)
+    {
+        $configuration = $this->getMetadataFromPath($sourcePath);
+
+        if($configuration === null) return "[ERROR COMPILATED]";
 
         $html = $this->getStaticSource($configuration);
 
