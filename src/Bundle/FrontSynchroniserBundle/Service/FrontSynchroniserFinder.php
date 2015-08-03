@@ -72,6 +72,11 @@ class FrontSynchroniserFinder {
             $this->indexMeta[$indexMetaItem] = $idMeta;
         }
     }
+    
+    public function find($index)
+    {
+        return $this->meta[$this->indexMeta[$index]];
+    }
 
     protected function loadMetadata()
     {
@@ -96,8 +101,6 @@ class FrontSynchroniserFinder {
 
             $this->storeMetadata($metadata);
         }
-
-        echo print_r($this->meta, true);
     }
 
 }

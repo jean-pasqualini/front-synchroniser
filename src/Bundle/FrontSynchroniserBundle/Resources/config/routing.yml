@@ -1,3 +1,7 @@
 debug_frontsynchroniser_showtemplate:
-    path:     /debug/frontsynchroniser/showtemplate/{name}
+    path:     /debug/frontsynchroniser/show/{name}
     defaults: { _controller: FrontSynchroniserBundle:Default:index, name: null }
+    
+debug_frontsynchroniser_edittemplate:
+    path:     /debug/frontsynchroniser/edit/{name}
+    defaults: { _controller: FrontSynchroniserBundle:Default:edit, name: null }    

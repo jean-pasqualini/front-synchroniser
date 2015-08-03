@@ -10,7 +10,10 @@
                 <ul class="nav nav-pills nav-stacked">
                     {% for item in list %}
                         <li>
-                            <a href="{{ path("debug_frontsynchroniser_showtemplate", {name: item}) }}" target="right">{{ item }}</a>
+                            <a href="{{ path("debug_frontsynchroniser_showtemplate", {name: item.file }) }}" target="right">{{ item.file }}</a>
+                            <ul>
+                                <li> {{ item.meta.name }} </li>
+                            </ul>
                         </li>
                     {% endfor %}
                 </ul>

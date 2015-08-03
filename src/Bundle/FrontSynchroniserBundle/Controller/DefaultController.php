@@ -31,11 +31,25 @@ class DefaultController extends Controller
 
         foreach($files as $file)
         {
-            $list[] = $file->getFilename();
+            $list[] = array(
+                            "file" => $file->getFilename(),
+                            "meta" => $frontSynchroniserFinder->find($file->getFilename())
+                    );
         }
 
         return $this->render('FrontSynchroniserBundle:Default:index.html.twig', array(
             'list' => $list
+        ));
+    }
+    
+    public function editAction($name)
+    {
+        $fsManager = $this->get("front_synchroniser.manager");
+        
+        $pathResolver = $this->get("front_synchroniser.path_resolver.symfony");
+        
+        return $this->render('FrontSynchroniserBundle:Default:edit.html.twig', array(
+            "editorcontent" => $fsManager->render($pathResolver->locate($name), true)
         ));
     }
 }
