@@ -12,7 +12,7 @@
                         <li>
                             <a href="{{ path("debug_frontsynchroniser_showtemplate", {name: item.file }) }}" target="right">{{ item.file }}</a>
                             <ul>
-                                <li> {{ item.meta.name }} </li>
+                                <li> <a href="{{ path("debug_frontsynchroniser_edittemplate", { name: item.meta.name }) }}" target="_blank">{{ item.meta.name }}</a> </li>
                             </ul>
                         </li>
                     {% endfor %}
