@@ -69,13 +69,19 @@ class FrontSynchroniserFinder {
 
         foreach($indexMeta as $indexMetaItem)
         {
-            $this->indexMeta[$indexMetaItem] = $idMeta;
+            if(!isset($this->indexMeta[$indexMetaItem])) $this->indexMeta[$indexMetaItem] = array();
+            
+            $this->indexMeta[$indexMetaItem][] = $idMeta;
         }
     }
     
     public function find($index)
     {
-        return $this->meta[$this->indexMeta[$index]];
+        $idMetas = $this->indexMeta[$index];
+        
+        $metas = $this->meta;
+        
+        return array_map(function($item) use ($metas) { return $metas[$item]; }, $idMetas);
     }
 
     protected function loadMetadata()

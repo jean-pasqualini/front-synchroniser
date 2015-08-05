@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
 use FrontSynchroniserBundle\Service\FrontSynchroniserFinder;
+use FrontSynchroniser\Render as FrontSynchroniserRender;
 
 class DefaultController extends Controller
 {
@@ -18,7 +19,12 @@ class DefaultController extends Controller
          */
         $frontSynchroniserFinder = $this->get("front_synchroniser.finder");
 
-        if($name !== null) return $this->render($configuration["staticdir"].DIRECTORY_SEPARATOR.$name);
+        if($name !== null)
+        {
+            $renderManager = new FrontSynchroniserRender();
+            
+            return new Response($renderManager->renderStatic($configuration["staticdir"].DIRECTORY_SEPARATOR.$name));
+        }
 
         $finder = new Finder();
 

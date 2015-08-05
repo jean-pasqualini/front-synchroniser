@@ -26,6 +26,11 @@ class Render {
     {
         return $this->errors;
     }
+    
+    public function renderStatic($path)
+    {
+        return file_get_contents($path);
+    }
 
     public function render($htmlObject, $configuration, $edit)
     {
