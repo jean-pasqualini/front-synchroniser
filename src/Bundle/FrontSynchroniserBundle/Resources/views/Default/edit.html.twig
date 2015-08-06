@@ -1,8 +1,13 @@
 {% extends "FrontSynchroniserBundle::layout.html.twig" %}
 
 {% block frontsynchroniser_body %}
-                <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+            <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/default.min.css">
+            <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
             <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+            <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+            <script src="http://codemirror.net/lib/codemirror.js"></script>
+            <script src="{{ asset("bundles/frontsynchroniser/js/fiddle.js") }}"></script>
+            <script src="{{ asset("bundles/frontsynchroniser/js/fswidget.js") }}"></script>
             <style>
                 pre { margin: 0px; }
                 html, body { background: #f0f0f0; padding: 0px; }
@@ -23,12 +28,20 @@
     <div class="col-xs-9">
         <div class="panel panel-default">
             <div class="panel-heading">
-                Edition
+                Edition php
             </div>
             <div class="panel-body">
                 {{ editorcontent | raw }}
             </div>
         </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Edition js
+            </div>
+            <div class="panel-body">
+                <textarea id="code">{{ editorcontent | raw }}</textarea>
+            </div>
+        </div>    
         <div class="panel panel-danger" style="width: 100%; height: 100px;">
             <div class="panel-heading">
                 Erreurs
