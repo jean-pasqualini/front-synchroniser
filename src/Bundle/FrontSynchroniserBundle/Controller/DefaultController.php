@@ -55,7 +55,8 @@ class DefaultController extends Controller
         $pathResolver = $this->get("front_synchroniser.path_resolver.symfony");
         
         return $this->render('FrontSynchroniserBundle:Default:edit.html.twig', array(
-            "editorcontent" => $fsManager->render($pathResolver->locate($name), true)
+            "editorphp" => $fsManager->render($pathResolver->locate($name), true, false),
+            "editorjs" => $fsManager->render($pathResolver->locate($name), true, true)
         ));
     }
 }

@@ -11,6 +11,7 @@
             <style>
                 pre { margin: 0px; }
                 html, body { background: #f0f0f0; padding: 0px; }
+                .editable { background: red; color: white; font-weight: bold; display: inline; }
             </style>
     
     <div class="col-xs-3">
@@ -31,7 +32,7 @@
                 Edition php
             </div>
             <div class="panel-body">
-                {{ editorcontent | raw }}
+                {{ editorphp | raw }}
             </div>
         </div>
         <div class="panel panel-default">
@@ -39,7 +40,7 @@
                 Edition js
             </div>
             <div class="panel-body">
-                <textarea id="code">{{ editorcontent | raw }}</textarea>
+                <textarea id="code">{{ editorjs | raw }}</textarea>
             </div>
         </div>    
         <div class="panel panel-danger" style="width: 100%; height: 100px;">

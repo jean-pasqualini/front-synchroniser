@@ -66,8 +66,13 @@ class FrontSynchroniserManager {
         
         return $configuration;
     }
+    
+    public function getErrors()
+    {
+        return array();
+    }
 
-    public function render($sourcePath, $edit = false)
+    public function render($sourcePath, $edit = false, $js = false)
     {
         $configuration = $this->getMetadataFromPath($sourcePath);
 
@@ -79,30 +84,17 @@ class FrontSynchroniserManager {
 
         $containerObject = $htmlObject->find($configuration["container"]);
 
-        $renderManager = new FrontSynchroniserRender();
+        $renderManager = new FrontSynchroniserRender($configuration);
 
         $renderManager->render($containerObject, $configuration["dom"], $edit);
 
-        if(!$edit)
-        {
-            return $containerObject->getHtml();
-        }
-        else
-        {
-            $output = "<pre><code class='html'>".htmlspecialchars($containerObject->getHtml())."</code></pre>";
-
-            $pattern = "/".str_replace("xxxxx", "([0-9]+)", $renderManager->getVarTemplate())."/i";
-
-            $output = preg_replace_callback($pattern, function($item) use($configuration)
-            {
-                //exit(print_r($item, true));
-
-                return "</code></pre><div style='background: red; color: white; font-weight: bold; display: inline;' contenteditable='true' title='".$item[1]."'>".$configuration["dom"][$item[1]]["content"]."</div><pre><code class='html'>";
-            }, $output);
-
-            return $output;
-        }
-
+        $output = $containerObject->getHtml();
+        
+        if($edit) $output = "<pre><code class='html'>".htmlspecialchars($output)."</code></pre>";
+        
+        if(!$js) $output = $renderManager->postRender($output, $edit);
+        
+        return $output;
 
     }
 }
