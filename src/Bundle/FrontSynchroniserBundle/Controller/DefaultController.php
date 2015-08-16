@@ -2,6 +2,7 @@
 
 namespace FrontSynchroniserBundle\Controller;
 
+use Artack\DOMQuery\DOMQuery;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
@@ -57,6 +58,40 @@ class DefaultController extends Controller
         return $this->render('FrontSynchroniserBundle:Default:edit.html.twig', array(
             "editorphp" => $fsManager->render($pathResolver->locate($name), true, false),
             "editorjs" => $fsManager->render($pathResolver->locate($name), true, true)
+        ));
+    }
+
+    private function getChildren(DOMQuery $htmlObject, &$lines, $indent = 0)
+    {
+        $children = $htmlObject->getChildren();
+
+        foreach($children as $child)
+        {
+            $prepend = "";
+
+            for($i = 0; $i <= $indent; $i++) { $prepend .= "="; }
+
+            /** @var $child DOMQuery */
+            $lines[] = $prepend."=> ".$child->getName();
+
+            $this->getChildren($child, $lines, $indent + 5);
+        }
+    }
+
+    public function testAction()
+    {
+        $configuration = $this->getParameter("front_synchroniser");
+
+        $static = $configuration["staticdir"].DIRECTORY_SEPARATOR."demo.html";
+
+        $htmlObject = \Artack\DOMQuery\DOMQuery::create(file_get_contents($static));
+
+        $lines = array();
+
+        $this->getChildren($htmlObject, $lines);
+
+        return $this->render('FrontSynchroniserBundle:Default:test.html.twig', array(
+            "lines" => $lines
         ));
     }
 }

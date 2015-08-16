@@ -1,0 +1,12 @@
+{% extends "FrontSynchroniserBundle::layout.html.twig" %}
+
+{% block frontsynchroniser_body %}
+    Test
+
+    <ul>
+        {% for line in lines %}
+            <li>{{ line }}</li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
