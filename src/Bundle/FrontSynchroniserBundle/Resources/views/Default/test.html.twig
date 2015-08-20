@@ -3,10 +3,117 @@
 {% block frontsynchroniser_body %}
     Test
 
-    <ul>
+    <ul class="list-unstyled">
         {% for line in lines %}
-            <li>{{ line }}</li>
+            <li><code>{{ line | raw }}</code></li>
         {% endfor %}
     </ul>
 
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Configuration
+        </div>
+        <div class="body">
+            <div class="clearfix">
+                <div class="">
+                    <div class="checkbox">
+                        <input type="checkbox" id="option-drag">
+                        <label for="option-drag">Activer le déplacement de contenu</label>
+                        <div class="onoff"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="console">
+
+    </div>
+
+    <style type="text/css">
+        .onoff
+        {
+            width: 20px;
+            -webkit-border-radius: 5px;
+            height: 20px;
+            background: red;
+            position: absolute;
+            left: -5px;
+            top: 0px;
+        }
+
+        input[type=checkbox]:checked + label + div.onoff
+        {
+            background: green;
+        }
+
+        .console
+        {
+            background: rgba(255,0,0,.2);
+            padding: 5px;
+            height: 200px;
+            overflow: auto;
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+         body
+        {
+            margin-top: 200px;
+        }
+
+        .node.node-text
+        {
+            color: green;
+            font-weight: bold;
+        }
+
+        .node
+        {
+            background: rgba(100, 100, 100, .1);
+            padding: 2px;
+        }
+
+        .node:hover {
+            background: yellow;
+        }
+    </style>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script type="text/javascript">
+        console.log = function(message)
+        {
+            $(".console").append("log : " + message + "<br>");
+        };
+
+        $(".node").blur(function()
+        {
+            console.log("Node " + $(this).data("path") + " changed : " + $(this).html());
+        });
+
+        $("#option-drag").change(function()
+        {
+             if($("#option-drag").is(":checked"))
+             {
+                 $(".node").draggable();
+
+                 console.log("activation de l'option drag");
+             }
+             else
+             {
+                 $(".node").draggable("destroy");
+
+                 console.log("desactivation de l'option drag");
+             }
+        });
+    </script>
 {% endblock %}

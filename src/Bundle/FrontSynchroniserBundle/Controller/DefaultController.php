@@ -8,6 +8,7 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Response;
 use FrontSynchroniserBundle\Service\FrontSynchroniserFinder;
 use FrontSynchroniser\Render as FrontSynchroniserRender;
+use \DOMNodeList;
 
 class DefaultController extends Controller
 {
@@ -61,20 +62,47 @@ class DefaultController extends Controller
         ));
     }
 
-    private function getChildren(DOMQuery $htmlObject, &$lines, $indent = 0)
+    private function getChildren(\DOMNodeList $children, &$lines, $indent = 0)
     {
-        $children = $htmlObject->getChildren();
+        $baliseStart = htmlentities("<");
+        $baliseEnd = htmlentities(">");
 
         foreach($children as $child)
         {
             $prepend = "";
 
-            for($i = 0; $i <= $indent; $i++) { $prepend .= "="; }
+            for($i = 0; $i <= $indent; $i++) { $prepend .= "."; }
 
-            /** @var $child DOMQuery */
-            $lines[] = $prepend."=> ".$child->getName();
+            $prepend = "<span>$prepend</span>";
 
-            $this->getChildren($child, $lines, $indent + 5);
+            if($child instanceof \DOMElement)
+            {
+                $path = $child->getNodePath();
+
+                $attributes = array();
+
+                foreach($child->attributes as $attribute)
+                {
+                    $attributes[] = "<b>".$attribute->name."='<span data-path='$path' title='$path' class='node node-attribute node-container' contenteditable='true'>".$attribute->value."</span>'</b>";
+                }
+
+                $lines[] = $prepend.$baliseStart.$child->nodeName." ".implode(" ", $attributes)." ".$baliseEnd;
+            }
+
+            if($child instanceof \DOMText)
+            {
+                $texte = trim($child->textContent);
+
+                if(!empty($texte))
+                {
+                    $lines[] = $prepend."<span class='node node-text node-container' contenteditable='true'>".$child->textContent."</span>";
+                }
+            }
+
+            if($child->hasChildNodes())
+            {
+                $this->getChildren($child->childNodes, $lines, $indent + 5);
+            }
         }
     }
 
@@ -84,11 +112,13 @@ class DefaultController extends Controller
 
         $static = $configuration["staticdir"].DIRECTORY_SEPARATOR."demo.html";
 
-        $htmlObject = \Artack\DOMQuery\DOMQuery::create(file_get_contents($static));
+        $dom = new \DOMDocument();
+
+        $dom->loadHTML(file_get_contents($static));
 
         $lines = array();
 
-        $this->getChildren($htmlObject, $lines);
+        $this->getChildren($dom->childNodes, $lines);
 
         return $this->render('FrontSynchroniserBundle:Default:test.html.twig', array(
             "lines" => $lines
