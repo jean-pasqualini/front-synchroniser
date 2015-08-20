@@ -3,11 +3,14 @@
 {% block frontsynchroniser_body %}
     Test
 
-    <ul class="list-unstyled">
-        {% for line in lines %}
-            <li><code>{{ line | raw }}</code></li>
-        {% endfor %}
-    </ul>
+    <div class="editor">
+        <ul class="list-unstyled">
+            {% for line in lines %}
+                <li><code>{{ line | raw }}</code></li>
+            {% endfor %}
+        </ul>
+    </div>
+
 
     <div class="panel panel-default">
         <div class="panel-heading">
@@ -32,6 +35,11 @@
     </div>
 
     <style type="text/css">
+        .editor
+        {
+            position: relative;
+        }
+
         .onoff
         {
             width: 20px;

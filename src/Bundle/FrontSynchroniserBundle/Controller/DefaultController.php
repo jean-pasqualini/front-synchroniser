@@ -62,47 +62,85 @@ class DefaultController extends Controller
         ));
     }
 
-    private function getChildren(\DOMNodeList $children, &$lines, $indent = 0)
+    protected function getPrepend($indent)
+    {
+        $prepend = "";
+
+        for($i = 0; $i <= $indent; $i++) { $prepend .= "."; }
+
+        $prepend = "<span>$prepend</span>";
+
+        return $prepend;
+    }
+
+    private function domElement(\DOMElement $child, &$lines, $indent = 0)
     {
         $baliseStart = htmlentities("<");
         $baliseEnd = htmlentities(">");
 
+        $prepend = $this->getPrepend($indent);
+
+        $path = $child->getNodePath();
+
+        $attributes = array();
+
+        $numLines = count($lines);
+
+        foreach($child->attributes as $attribute)
+        {
+            $attributes[] = "<b>".$attribute->name."='<span data-path='$path' title='$path' class='node node-attribute node-container' contenteditable='true'>".$attribute->value."</span>'</b>";
+        }
+
+        $lines[] = $prepend.$baliseStart.$child->nodeName." ".implode(" ", $attributes)." ".$baliseEnd;
+
+        if($child->hasChildNodes())
+        {
+            $this->getChildren($child->childNodes, $lines, $indent + 5);
+        }
+
+        $this->coucheVisuel($child, $numLines, 10, $lines);
+    }
+
+    private function coucheVisuel(\DOMElement $element, $start, $countLines, &$lines)
+    {
+        $top = 0;
+
+        $sizeLine = 20;
+
+        $posYStart = $top + ($start * $sizeLine);
+
+        $posYEnd = $posYStart + ($countLines * $sizeLine);
+
+        $lines[] = "<div style='position: absolute; top: ".$posYStart."px; height: ".$posYEnd."px; left: 0px; right: 0px; background: transparent; border: solid red 1px;'></div>";
+    }
+
+    private function domText(\DOMText $child, &$lines, $indent = 0)
+    {
+        $prepend = $this->getPrepend($indent);
+
+        $texte = trim($child->textContent);
+
+        if(!empty($texte))
+        {
+            $lines[] = $prepend."<span class='node node-text node-container' contenteditable='true'>".$child->textContent."</span>";
+        }
+    }
+
+    private function getChildren(\DOMNodeList $children, &$lines, $indent = 0)
+    {
         foreach($children as $child)
         {
-            $prepend = "";
-
-            for($i = 0; $i <= $indent; $i++) { $prepend .= "."; }
-
-            $prepend = "<span>$prepend</span>";
 
             if($child instanceof \DOMElement)
             {
-                $path = $child->getNodePath();
-
-                $attributes = array();
-
-                foreach($child->attributes as $attribute)
-                {
-                    $attributes[] = "<b>".$attribute->name."='<span data-path='$path' title='$path' class='node node-attribute node-container' contenteditable='true'>".$attribute->value."</span>'</b>";
-                }
-
-                $lines[] = $prepend.$baliseStart.$child->nodeName." ".implode(" ", $attributes)." ".$baliseEnd;
+                $this->domElement($child, $lines, $indent);
             }
 
             if($child instanceof \DOMText)
             {
-                $texte = trim($child->textContent);
-
-                if(!empty($texte))
-                {
-                    $lines[] = $prepend."<span class='node node-text node-container' contenteditable='true'>".$child->textContent."</span>";
-                }
+                $this->domText($child, $lines, $indent);
             }
 
-            if($child->hasChildNodes())
-            {
-                $this->getChildren($child->childNodes, $lines, $indent + 5);
-            }
         }
     }
 
