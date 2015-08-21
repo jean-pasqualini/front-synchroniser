@@ -4,11 +4,12 @@
     Test
 
     <div class="editor">
-        <ul class="list-unstyled">
-            {% for line in lines %}
-                <li><code>{{ line | raw }}</code></li>
-            {% endfor %}
-        </ul>
+        <code class="couche-code">
+            {{ coucheCode.render() | raw }}
+        </code>
+        <div class="couche-visuel">
+            {{ coucheVisuel.render() | raw }}
+        </div>
     </div>
 
 
@@ -38,6 +39,45 @@
         .editor
         {
             position: relative;
+        }
+
+        .couche-code
+        {
+            z-index: 3;
+        }
+
+        .couche-visuel
+        {
+            z-index: 4;
+        }
+
+        .couche-visuel-dom
+        {
+            background: transparent;
+        }
+
+        .couche-visuel div:not(.couche-visuel-editeur):hover
+        {
+            background: rgba(50, 100, 200, .5);
+        }
+
+        .couche-visuel-editeur
+        {
+            display: none;
+            width: 100%;
+            height: 100%;
+            border: solid red 2px;
+            background: white;
+        }
+
+        .couche-visuel-dom-editing
+        {
+            z-index: 100000 !important;
+        }
+
+        .couche-visuel-dom-editing .couche-visuel-editeur
+        {
+            display: block;
         }
 
         .onoff
@@ -122,6 +162,11 @@
 
                  console.log("desactivation de l'option drag");
              }
+        });
+
+        $(".couche-visuel-dom").click(function()
+        {
+           $(this).addClass("couche-visuel-dom-editing");
         });
     </script>
 {% endblock %}
