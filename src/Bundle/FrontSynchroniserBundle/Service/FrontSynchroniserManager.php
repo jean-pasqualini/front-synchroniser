@@ -8,6 +8,8 @@
 
 namespace FrontSynchroniserBundle\Service;
 
+use FrontSynchroniserBundle\Editeur\CoucheCode;
+use FrontSynchroniserBundle\Editeur\CoucheVisuel;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 use FrontSynchroniser\Render as FrontSynchroniserRender;
@@ -70,6 +72,37 @@ class FrontSynchroniserManager {
     public function getErrors()
     {
         return array();
+    }
+
+    public function saveEditor($path, array $data)
+    {
+
+    }
+
+    public function buildEditor($sourcePath)
+    {
+///
+        $configuration = $this->getMetadataFromPath($sourcePath);
+
+        if($configuration === null) return "[ERROR COMPILATED]";
+
+        $html = $this->getStaticSource($configuration);
+
+        $htmlObject = \Artack\DOMQuery\DOMQuery::create($html);
+
+        $containerObject = $htmlObject->find($configuration["container"]);
+
+        $html = $containerObject->getHtml();
+        //
+
+        $coucheCode = new CoucheCode($html);
+
+        $coucheVisuel = new CoucheVisuel($html);
+
+        return array(
+            "coucheCode" => $coucheCode,
+            "coucheVisuel" => $coucheVisuel
+        );
     }
 
     public function render($sourcePath, $edit = false, $js = false)

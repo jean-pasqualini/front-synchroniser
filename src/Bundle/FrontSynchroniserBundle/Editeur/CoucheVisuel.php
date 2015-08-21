@@ -12,11 +12,15 @@ class CoucheVisuel {
 
     protected $source;
 
+    protected $domDocument;
+
     protected $lines;
 
     public function __construct($source)
     {
         $this->source = $source;
+
+        $this->domDocument = new \DOMDocument();
     }
 
     protected function getPrepend($indent)
@@ -56,7 +60,7 @@ class CoucheVisuel {
 
         $retour[] = $this->coucheVisuel($child, $start, $numLines, $lines);
 
-        return implode(",", $retour);
+        return implode("", $retour);
     }
 
     private function domText(\DOMText $child, &$lines, $indent = 0)
@@ -93,7 +97,7 @@ class CoucheVisuel {
 
         $path = $element->getNodePath();
 
-        return "<div title='$start : $countLines : $path' style='position: absolute; z-index: $zindex; top: ".$posYStart."px; height: ".$posYEnd."px; left: 0px; right: 0px;' class='couche-visuel-dom'><div class='couche-visuel-editeur' contenteditable='true'></div></div>";
+        return "<div title='$start : $countLines : $path' style='position: absolute; z-index: $zindex; top: ".$posYStart."px; height: ".$posYEnd."px; left: 0px; right: 0px;' class='couche-visuel-dom'><div class='couche-visuel-editeur'><form action'' method='post'><input type='hidden' name='path' value='$path'><textarea name='content'></textarea><textarea class='code'>".$this->domDocument->saveHTML($element)."</textarea><input type='submit'></form></div></div>";
     }
 
     private function getChildren(\DOMNodeList $children, &$lines, $indent = 0)
@@ -120,7 +124,7 @@ class CoucheVisuel {
 
     public function render()
     {
-        $dom = new \DOMDocument();
+        $dom = $this->domDocument;
 
         $dom->loadHTML($this->source);
 

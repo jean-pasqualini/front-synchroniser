@@ -7,10 +7,12 @@ use FrontSynchroniserBundle\Editeur\CoucheCode;
 use FrontSynchroniserBundle\Editeur\CoucheVisuel;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use FrontSynchroniserBundle\Service\FrontSynchroniserFinder;
 use FrontSynchroniser\Render as FrontSynchroniserRender;
 use \DOMNodeList;
+use FrontSynchroniserBundle\Service\FrontSynchroniserManager;
 
 class DefaultController extends Controller
 {
@@ -52,19 +54,33 @@ class DefaultController extends Controller
         ));
     }
     
-    public function editAction($name)
+    public function editAction(Request $request, $name)
     {
+        /** @var FrontSynchroniserManager $fsManager */
         $fsManager = $this->get("front_synchroniser.manager");
-        
+
         $pathResolver = $this->get("front_synchroniser.path_resolver.symfony");
-        
+
+        if($request->isMethod("POST"))
+        {
+            $nodePath = $request->request->get("path");
+
+            $content = $request->request->get("content");
+
+            $fsManager->saveEditor($pathResolver->locate($name), array(
+                 "nodePath" => $nodePath,
+                 "content" => $content
+            ));
+
+            return new Response("modification du noeud : ".$nodePath." avec le contenu '".htmlentities($content)."'");
+        }
+
         return $this->render('FrontSynchroniserBundle:Default:edit.html.twig', array(
-            "editorphp" => $fsManager->render($pathResolver->locate($name), true, false),
-            "editorjs" => $fsManager->render($pathResolver->locate($name), true, true)
+            "editor" => $fsManager->buildEditor($pathResolver->locate($name))
         ));
     }
 
-    public function testAction()
+    public function testAction(Request $request)
     {
         $configuration = $this->getParameter("front_synchroniser");
 
