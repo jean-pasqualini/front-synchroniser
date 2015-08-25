@@ -1,9 +1,5 @@
-# Configuration file for sync content
-template: "demo.html"
-container: "ul > li"
-
+template: demo.html
+container: 'ul > li'
 dom:
-  1:
-    selector: ".panel-heading"
-    content: |
-      {{ profile.name }}
+    1: { selector: .panel-heading, content: "{{ profile.name }}\n" }
+    2: { selector: 'div.panel.panel-default > div.panel-heading', content: '{% for i in 1..5 %}{{ i }}{% endfor %}' }

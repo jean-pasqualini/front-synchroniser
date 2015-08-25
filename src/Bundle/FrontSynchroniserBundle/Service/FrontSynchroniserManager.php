@@ -8,11 +8,14 @@
 
 namespace FrontSynchroniserBundle\Service;
 
+use Artack\DOMQuery\DOMQuery;
 use FrontSynchroniserBundle\Editeur\CoucheCode;
 use FrontSynchroniserBundle\Editeur\CoucheVisuel;
+use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\Yaml\Exception\ParseException;
 
 use FrontSynchroniser\Render as FrontSynchroniserRender;
+use Symfony\Component\Yaml\Yaml;
 
 class FrontSynchroniserManager {
 
@@ -74,8 +77,79 @@ class FrontSynchroniserManager {
         return array();
     }
 
+    public function getCss(\DOMNodeList $children, $xpath, $css = array(), $level = 1)
+    {
+        foreach($children as $child)
+        {
+            echo $child->getNodePath()." => ".$xpath."<br>";
+
+            if($child instanceof \DOMElement)
+            {
+                $domQuery = DOMQuery::createFromNode($child);
+
+                $classes = implode(".", $domQuery->getClasses());
+
+                if($level > 3)
+                {
+                    $css[] = $child->nodeName.((!empty($classes)) ? ".".$classes : "");
+                }
+
+                if($child->getNodePath() == $xpath)
+                {
+                    return implode(" > ", $css);
+                }
+                else
+                {
+                    return $this->getCss($child->childNodes, $xpath, $css, $level + 1);
+                }
+            }
+
+            if($child instanceof \DOMText)
+            {
+                if($child->getNodePath() == $xpath)
+                {
+                    return implode(" > ", $css);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function saveEditor($path, array $data)
     {
+        $metadata = $this->getMetadataFromPath($path);
+
+        $html = $this->getStaticSource($metadata);
+
+        $dom = new \DOMDocument();
+
+        $dom->loadHTML($html);
+
+        $xpath = new \DOMXPath($dom);
+
+        $result = $xpath->query(CssSelector::toXPath($metadata["container"]), $dom);
+
+        $containerHtml = $dom->saveHTML($result->item(0));
+
+        $dom->loadHTML($containerHtml);
+
+        $cssPath = $this->getCss($dom->childNodes, $data["nodePath"]);
+
+        if($cssPath !== null)
+        {
+            $metadata["dom"][] = array(
+                "selector" => $cssPath,
+                "content" => $data["content"]
+            );
+
+            file_put_contents($path, Yaml::dump($metadata));
+        }
+        else
+        {
+            echo "cssPath not build";
+        }
+
 
     }
 

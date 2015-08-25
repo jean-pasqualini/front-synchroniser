@@ -67,12 +67,14 @@ class DefaultController extends Controller
 
             $content = $request->request->get("content");
 
-            $fsManager->saveEditor($pathResolver->locate($name), array(
+            $fsFile = $pathResolver->locate($name);
+
+            $fsManager->saveEditor($fsFile, array(
                  "nodePath" => $nodePath,
                  "content" => $content
             ));
 
-            return new Response("modification du noeud : ".$nodePath." avec le contenu '".htmlentities($content)."'");
+            //return new Response("modification du noeud : ".$nodePath." avec le contenu '".htmlentities($content)."'");
         }
 
         return $this->render('FrontSynchroniserBundle:Default:edit.html.twig', array(
