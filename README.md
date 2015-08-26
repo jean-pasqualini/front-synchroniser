@@ -47,5 +47,20 @@ Il sera possible de faire un analyse dom du **html static** afin de générer de
 - . . . . Branch front T . . . . . . . . . Branche front T + 1
 - . . . . . Branche front T + BACK . . . . . Branche front T + 1 + Back
 
+### La gestion des contenu 
 
+Les **contenu** seront inclu dans un **conteneur** c'est ce conteneur qui va être replacer d'une version à l'autre et le contenu injecter.
 
+Un contenu peut être associé à plusieur conteneur, ainsi on puet dynamiser plusieur partie d'un **html static** avec le même **contenu**
+
+##### Conteneur
+
+Le conteneur porte un identifiant unique générer l'ors de son ajout, cette identifiant est 
+
+	__[id unique]__
+
+##### Contenu
+
+Le contenu peut être tous et n'importe quoid mais ne peut être utilser qu'a destination d'un ou plusieur conteneur.
+
+C'est le conteneur qui référence son contenu et non l'inverse
