@@ -2,6 +2,8 @@
 
 namespace FrontSynchroniser;
 
+use FluentDOM\Query as FluentDOMQuery;
+
 class Render {
 
     protected $uniq;
@@ -98,14 +100,15 @@ class Render {
                 $raw = str_replace("xxxxx", $id, $this->varTemplate);
             }
 
-            $collection = $htmlObject->find($configuration["selector"]);
+            /** @var \FluentDOM\Element $collection */
+            $collection = $htmlObject->querySelectorAll($configuration["selector"]);
 
             if($collection->count() == 0)
             {
                 $this->errors[] = "Le code injecter dans ".$configuration["selector"]." n'a pu être injecter";
             }
 
-            $collection->replaceInner($raw);
+            $collection->nodeValue = $raw;
         }
     }
 }

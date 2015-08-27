@@ -84,17 +84,8 @@ class DefaultController extends Controller
 
     public function testAction(Request $request)
     {
-        $configuration = $this->getParameter("front_synchroniser");
+        $fd = FluentDOM("<h1>[OK]</h1>", "text/html");
 
-        $static = $configuration["staticdir"].DIRECTORY_SEPARATOR."demo.html";
-
-        $coucheCode = new CoucheCode(file_get_contents($static));
-
-        $coucheVisuel = new CoucheVisuel(file_get_contents($static));
-
-        return $this->render('FrontSynchroniserBundle:Default:test.html.twig', array(
-            "coucheCode" => $coucheCode,
-            "coucheVisuel" => $coucheVisuel
-        ));
+        return new Response(htmlentities($fd));
     }
 }

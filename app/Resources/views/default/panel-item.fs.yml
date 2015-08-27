@@ -3,3 +3,4 @@ container: 'ul > li'
 dom:
     1: { selector: .panel-heading, content: "{{ profile.name }}\n" }
     2: { selector: 'div.panel.panel-default > div.panel-heading', content: '{% for i in 1..5 %}{{ i }}{% endfor %}' }
+    3: { selector: '/html/body/li/div/div[1]/text()', content: 'Un titre différent' }

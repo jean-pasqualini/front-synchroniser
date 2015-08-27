@@ -134,21 +134,12 @@ class FrontSynchroniserManager {
 
         $dom->loadHTML($containerHtml);
 
-        $cssPath = $this->getCss($dom->childNodes, $data["nodePath"]);
-
-        if($cssPath !== null)
-        {
             $metadata["dom"][] = array(
-                "selector" => $cssPath,
+                "selector" => $data["nodePath"],
                 "content" => $data["content"]
             );
 
             file_put_contents($path, Yaml::dump($metadata));
-        }
-        else
-        {
-            echo "cssPath not build";
-        }
 
 
     }
@@ -187,15 +178,17 @@ class FrontSynchroniserManager {
 
         $html = $this->getStaticSource($configuration);
 
-        $htmlObject = \Artack\DOMQuery\DOMQuery::create($html);
+        $htmlObject = new \FluentDOM\Document;
 
-        $containerObject = $htmlObject->find($configuration["container"]);
+        $htmlObject->loadHTML($html);
+
+        $containerObject = $htmlObject->querySelector($configuration["container"]);
 
         $renderManager = new FrontSynchroniserRender($configuration);
 
         $renderManager->render($containerObject, $configuration["dom"], $edit);
 
-        $output = $containerObject->getHtml();
+        $output = (string) $containerObject;
         
         if($edit) $output = "<pre><code class='html'>".htmlspecialchars($output)."</code></pre>";
         
