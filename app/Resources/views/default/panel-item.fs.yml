@@ -1,6 +1,6 @@
 template: demo.html
-container: 'ul > li'
+container: '/html/body/div/div[2]/div/ul/li[1]'
 dom:
-    1: { selector: .panel-heading, content: "{{ profile.name }}\n" }
-    2: { selector: 'div.panel.panel-default > div.panel-heading', content: '{% for i in 1..5 %}{{ i }}{% endfor %}' }
-    3: { selector: '/html/body/li/div/div[1]/text()', content: 'Un titre différent' }
+    1: { selector: "/html/body/div/div", content: "{{ profile.name }}\n" }
+    2: { selector: ".//div[(contains(concat(' ', normalize-space(./@class), ' '), ' panel ') and contains(concat(' ', normalize-space(./@class), ' '), ' panel-default '))]/div[contains(concat(' ', normalize-space(./@class), ' '), ' panel-heading ')]", content: '{% for i in 1..5 %}{{ i }}{% endfor %}' }
+    #3: { selector: '/html/body/li/div/div[1]/text()', content: 'Un titre différent' }

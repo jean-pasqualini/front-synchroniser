@@ -74,6 +74,8 @@ class DefaultController extends Controller
                  "content" => $content
             ));
 
+            return $this->redirect($request->getUri());
+
             //return new Response("modification du noeud : ".$nodePath." avec le contenu '".htmlentities($content)."'");
         }
 

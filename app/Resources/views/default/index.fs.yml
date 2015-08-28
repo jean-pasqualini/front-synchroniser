@@ -1,15 +1,8 @@
-# Configuration file for sync content
-template: "demo.html"
-container: "html"
-
+template: demo.html
+container: /html
 dom:
-  1:
-    selector: ".list-panel"
-    content: |
-      {% for profile in profiles %}
-        {% include fscompile("::default/panel-item.fs.yml") %}
-      {% endfor %}
-
-  2:
-    selector: ".count span"
-    content: "{{ profiles | length }}"
+    1: { selector: '/html/body/div/div[2]/div/ul', content: "{% for profile in profiles %}\n  {% include fscompile(\"::default/panel-item.fs.yml\") %}\n{% endfor %}\n" }
+    2: { selector: './/*[contains(concat('' '', normalize-space(./@class), '' ''), '' count '')]//span', content: '{{ profiles | length }}' }
+    3: { selector: '/html/body/div/div[3]/text()[2]', content: " profiles et chats\r\n    " }
+    4: { selector: '/html/body/div/div[1]/h1/text()', content: 'Liste des profiles ({{ profiles | length }})' }
+    5: { selector: /html/head/link, content: 'Remplace le css' }

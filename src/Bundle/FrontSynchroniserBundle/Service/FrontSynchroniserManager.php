@@ -128,20 +128,18 @@ class FrontSynchroniserManager {
 
         $xpath = new \DOMXPath($dom);
 
-        $result = $xpath->query(CssSelector::toXPath($metadata["container"]), $dom);
+        $result = $xpath->query($metadata["container"], $dom);
 
         $containerHtml = $dom->saveHTML($result->item(0));
 
         $dom->loadHTML($containerHtml);
 
-            $metadata["dom"][] = array(
+        $metadata["dom"][] = array(
                 "selector" => $data["nodePath"],
                 "content" => $data["content"]
-            );
+        );
 
-            file_put_contents($path, Yaml::dump($metadata));
-
-
+        file_put_contents($path, Yaml::dump($metadata));
     }
 
     public function buildEditor($sourcePath)
@@ -153,11 +151,15 @@ class FrontSynchroniserManager {
 
         $html = $this->getStaticSource($configuration);
 
-        $htmlObject = \Artack\DOMQuery\DOMQuery::create($html);
+        $htmlObject = new \FluentDOM\Document;
+
+        $htmlObject->loadHTML($html);
 
         $containerObject = $htmlObject->find($configuration["container"]);
 
-        $html = $containerObject->getHtml();
+        $containerObject->contentType = "text/html";
+
+        $html = $containerObject->html();
         //
 
         $coucheCode = new CoucheCode($html);
@@ -182,13 +184,21 @@ class FrontSynchroniserManager {
 
         $htmlObject->loadHTML($html);
 
-        $containerObject = $htmlObject->querySelector($configuration["container"]);
+        $containerObject = $htmlObject->find($configuration["container"]);
+
+        $containerObject->contentType = "text/html";
+
+        $containerHtml = $containerObject->html();
+
+        $containerObject = new \FluentDOM\Document;
+
+        $containerObject->loadHTML($containerHtml);
 
         $renderManager = new FrontSynchroniserRender($configuration);
 
         $renderManager->render($containerObject, $configuration["dom"], $edit);
 
-        $output = (string) $containerObject;
+        $output = (string) $containerObject->toHtml();
         
         if($edit) $output = "<pre><code class='html'>".htmlspecialchars($output)."</code></pre>";
         

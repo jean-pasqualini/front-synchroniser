@@ -3,6 +3,7 @@
 namespace FrontSynchroniser;
 
 use FluentDOM\Query as FluentDOMQuery;
+use Symfony\Component\CssSelector\CssSelector;
 
 class Render {
 
@@ -100,15 +101,24 @@ class Render {
                 $raw = str_replace("xxxxx", $id, $this->varTemplate);
             }
 
-            /** @var \FluentDOM\Element $collection */
-            $collection = $htmlObject->querySelectorAll($configuration["selector"]);
+            try {
+                /** @var \FluentDOM\Element $collection */
+                $collection = $htmlObject->find($configuration["selector"]);
+            }
+            catch (InvalidArgumentException $e)
+            {
+                exit("invalid selector ".$configuration["selector"]);
+            }
 
             if($collection->count() == 0)
             {
                 $this->errors[] = "Le code injecter dans ".$configuration["selector"]." n'a pu être injecter";
             }
 
-            $collection->nodeValue = $raw;
+            foreach($collection as $item)
+            {
+                $item->nodeValue = $raw;
+            }
         }
     }
 }
