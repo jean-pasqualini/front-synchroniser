@@ -96,6 +96,6 @@ class CoucheCode {
 
         $this->getChildren($dom->childNodes, $lines);
 
-        return implode("<br>", $lines);
+        return "<div class='line'>".implode("</div><div class='line'>", $lines)."</div>";
     }
 }
