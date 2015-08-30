@@ -15,13 +15,15 @@ class Render {
     
     protected $contents = array();
 
-    public function __construct(array $contents = array())
+    protected $configuration;
+
+    public function __construct(array $configuration = array())
     {
         $this->uniq = uniqid();
 
         $this->varTemplate = "__".$this->uniq."__xxxxx__".$this->uniq."__";
         
-        $this->contents = $contents;
+        $this->configuration = $configuration;
     }
 
     public function getVarTemplate()
@@ -71,10 +73,10 @@ class Render {
     
     public function getContent($id)
     {
-        return $this->contents["dom"][$id]["content"];
+        return (isset($this->configuration["content"][$id])) ? $this->configuration["content"][$id] : "[ERROR CONTENT]";
     }
 
-    public function render($htmlObject, $configuration, $edit)
+    public function render($htmlObject, $configurations, $edit)
     {
         /**
         if($edit)
@@ -92,9 +94,9 @@ class Render {
             }
         }
         */
-        foreach($configuration as $id => $configuration)
+        foreach($configurations["dom"] as $id => $configuration)
         {
-            $raw = $configuration["content"];
+            $raw = $this->getContent($configuration["content"]);
 
             if($edit === true)
             {

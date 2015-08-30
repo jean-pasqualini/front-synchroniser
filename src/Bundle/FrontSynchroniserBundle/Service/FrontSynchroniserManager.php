@@ -40,6 +40,15 @@ class FrontSynchroniserManager {
 
         $compiledPath = $this->getCompiledPath($sourcePath);
 
+        if(file_exists($compiledPath))
+        {
+            return $compiledPath;
+        }
+
+        if (!file_exists($this->configuration["outputdir"])) {
+            mkdir($this->configuration["outputdir"], 0777, true);
+        }
+
         $compiledSource = $this->render($sourcePath);
 
         file_put_contents($compiledPath, $compiledSource);
@@ -128,15 +137,29 @@ class FrontSynchroniserManager {
 
         $xpath = new \DOMXPath($dom);
 
-        $result = $xpath->query($metadata["container"], $dom);
+        if($metadata["container"] === null)
+        {
+            $containerHtml = $dom->saveHTML();
+        }
+        else
+        {
+            $result = $xpath->query($metadata["container"], $dom);
 
-        $containerHtml = $dom->saveHTML($result->item(0));
+            $containerHtml = $dom->saveHTML($result->item(0));
+        }
 
         $dom->loadHTML($containerHtml);
 
+        $idContent = count($metadata["content"]) + 1;
+
+        $idNode = "__".uniqid(md5($data["nodePath"]))."__";
+
+        $metadata["content"][$idContent] = $data["content"];
+
         $metadata["dom"][] = array(
+                "id" => $idNode,
                 "selector" => $data["nodePath"],
-                "content" => $data["content"]
+                "content" => $idContent
         );
 
         file_put_contents($path, Yaml::dump($metadata));
@@ -155,16 +178,23 @@ class FrontSynchroniserManager {
 
         $htmlObject->loadHTML($html);
 
-        $containerObject = $htmlObject->find($configuration["container"]);
+        if($configuration["container"] === null)
+        {
+            $containerHtml = $htmlObject->saveHTML();
+        }
+        else
+        {
+            $containerObject = $htmlObject->find($configuration["container"]);
 
-        $containerObject->contentType = "text/html";
+            $containerObject->contentType = "text/html";
 
-        $html = $containerObject->html();
+            $containerHtml = $containerObject->html();
+        }
         //
 
-        $coucheCode = new CoucheCode($html);
+        $coucheCode = new CoucheCode($containerHtml);
 
-        $coucheVisuel = new CoucheVisuel($html);
+        $coucheVisuel = new CoucheVisuel($containerHtml);
 
         return array(
             "coucheCode" => $coucheCode,
@@ -184,19 +214,31 @@ class FrontSynchroniserManager {
 
         $htmlObject->loadHTML($html);
 
-        $containerObject = $htmlObject->find($configuration["container"]);
+        if($configuration["container"] === null)
+        {
+            $containerHtml = $htmlObject->saveHTML();
+        }
+        else
+        {
+            $containerObject = $htmlObject->find($configuration["container"]);
 
-        $containerObject->contentType = "text/html";
+            $containerObject->contentType = "text/html";
 
-        $containerHtml = $containerObject->html();
+            $containerHtml = $containerObject->html();
+        }
+
+        if(strpos($sourcePath, "panel") !== false)
+        {
+            //return htmlentities($containerHtml);
+        }
 
         $containerObject = new \FluentDOM\Document;
 
-        $containerObject->loadHTML($containerHtml);
+        $containerObject->loadHTML($containerHtml, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
         $renderManager = new FrontSynchroniserRender($configuration);
 
-        $renderManager->render($containerObject, $configuration["dom"], $edit);
+        $renderManager->render($containerObject, $configuration, $edit);
 
         $output = (string) $containerObject->toHtml();
         

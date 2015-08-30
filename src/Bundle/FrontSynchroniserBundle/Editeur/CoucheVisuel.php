@@ -126,7 +126,7 @@ class CoucheVisuel {
     {
         $dom = $this->domDocument;
 
-        $dom->loadHTML($this->source);
+        $dom->loadHTML($this->source, LIBXML_HTML_NOIMPLIED);
 
         $lines = array();
 

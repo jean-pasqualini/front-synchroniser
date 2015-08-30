@@ -90,7 +90,7 @@ class CoucheCode {
     {
         $dom = new \DOMDocument();
 
-        $dom->loadHTML($this->source);
+        $dom->loadHTML($this->source, LIBXML_HTML_NOIMPLIED);
 
         $lines = array();
 

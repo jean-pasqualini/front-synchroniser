@@ -10,7 +10,7 @@ parameters:
 
 front_synchroniser:
     staticdir: "%kernel.root_dir%/Resources/static/"
-    outputdir: "%kernel.cache_dir%"
+    outputdir: "%kernel.cache_dir%/frontsynchroniser/"
     fsdir: "fs-files"
 
 framework:

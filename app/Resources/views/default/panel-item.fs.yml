@@ -1,6 +1,12 @@
 template: demo.html
 container: '/html/body/div/div[2]/div/ul/li[1]'
 dom:
-    1: { selector: "/html/body/div/div", content: "{{ profile.name }}\n" }
-    2: { selector: ".//div[(contains(concat(' ', normalize-space(./@class), ' '), ' panel ') and contains(concat(' ', normalize-space(./@class), ' '), ' panel-default '))]/div[contains(concat(' ', normalize-space(./@class), ' '), ' panel-heading ')]", content: '{% for i in 1..5 %}{{ i }}{% endfor %}' }
-    #3: { selector: '/html/body/li/div/div[1]/text()', content: 'Un titre différent' }
+    1: { selector: '/div/div[1]', content: 1 }
+    2: { selector: '/div/div[3]', content: 2 }
+    3: { selector: '/div/div[2]/text()', content: 3 }
+    4: { selector: '/div/div[2]/div/div[2]/table/tr[2]/td[2]/text()', content: 4 }
+content:
+    1: "{{ profile.name }}\n"
+    2: '{% for i in 1..5 %}{{ i }}{% endfor %}'
+    3: 'trois et quatre'
+    4: '{{ profile.name }}'

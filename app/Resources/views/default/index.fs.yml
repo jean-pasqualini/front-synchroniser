@@ -1,8 +1,17 @@
 template: demo.html
-container: /html
+container: null
 dom:
-    1: { selector: '/html/body/div/div[2]/div/ul', content: "{% for profile in profiles %}\n  {% include fscompile(\"::default/panel-item.fs.yml\") %}\n{% endfor %}\n" }
-    2: { selector: './/*[contains(concat('' '', normalize-space(./@class), '' ''), '' count '')]//span', content: '{{ profiles | length }}' }
-    3: { selector: '/html/body/div/div[3]/text()[2]', content: " profiles et chats\r\n    " }
-    4: { selector: '/html/body/div/div[1]/h1/text()', content: 'Liste des profiles ({{ profiles | length }})' }
-    5: { selector: /html/head/link, content: 'Remplace le css' }
+    1: { selector: '/html/body/div/div[2]/div/ul', content: 1 }
+    3: { selector: '/html/body/div/div[3]/text()[2]', content: 3 }
+    4: { selector: '/html/body/div/div[1]/h1/text()', content: 4 }
+    5: { selector: /html/head/link, content: 5 }
+    6: { selector: '/html/body/div/div[3]/span/text()', content: 2 }
+    7: { id: __ca547ad4f4d963aaaf1f205155adf2d055e330b33ca25__, selector: '/html/body/div/div[3]/text()[2]', content: 7 }
+content:
+    1: "{% for profile in profiles %}\n  {% include fscompile(\"::default/panel-item.fs.yml\") %}\n{% endfor %}\n"
+    2: '{{ profiles | length }} mwhaha'
+    3: " profiles et chats\r\n    "
+    4: 'Liste des profiles ({{ profiles | length }})'
+    5: 'Remplace le css'
+    6: " profiles et companie\r\n    "
+    7: ' profiles et companie'
