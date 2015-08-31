@@ -12,9 +12,13 @@ class CoucheCode {
 
     protected $source;
 
-    public function __construct($source)
+    protected $coucheContenu;
+
+    public function __construct($source, CoucheContennu $coucheContennu)
     {
         $this->source = $source;
+
+        $this->coucheContenu = $coucheContennu;
     }
 
     protected function getPrepend($indent)
@@ -28,7 +32,7 @@ class CoucheCode {
         return $prepend;
     }
 
-    private function domElement(\DOMElement $child, &$lines, $indent = 0)
+    protected function domElement(\DOMElement $child, &$lines, $indent = 0)
     {
         $baliseStart = htmlentities("<");
         $baliseEnd = htmlentities(">");
@@ -56,7 +60,7 @@ class CoucheCode {
         $lines[] = $prepend.$baliseStart."/".$child->nodeName.$baliseEnd;
     }
 
-    private function domText(\DOMText $child, &$lines, $indent = 0)
+    protected function domText(\DOMText $child, &$lines, $indent = 0)
     {
         $prepend = $this->getPrepend($indent);
 
@@ -68,21 +72,28 @@ class CoucheCode {
         }
     }
 
+    protected function domRender(\DOMNode $child, &$lines, $indent = 0)
+    {
+        $success = $this->coucheContenu->domRender($child, $lines, $indent);
+
+        if($success === true) return;
+
+        if($child instanceof \DOMElement)
+        {
+            $this->domElement($child, $lines, $indent);
+        }
+
+        if($child instanceof \DOMText)
+        {
+            $this->domText($child, $lines, $indent);
+        }
+    }
+
     private function getChildren(\DOMNodeList $children, &$lines, $indent = 0)
     {
         foreach($children as $child)
         {
-
-            if($child instanceof \DOMElement)
-            {
-                $this->domElement($child, $lines, $indent);
-            }
-
-            if($child instanceof \DOMText)
-            {
-                $this->domText($child, $lines, $indent);
-            }
-
+            $this->domRender($child, $lines, $indent);
         }
     }
 

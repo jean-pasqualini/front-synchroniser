@@ -10,6 +10,7 @@ namespace FrontSynchroniserBundle\Service;
 
 use Artack\DOMQuery\DOMQuery;
 use FrontSynchroniserBundle\Editeur\CoucheCode;
+use FrontSynchroniserBundle\Editeur\CoucheContennu;
 use FrontSynchroniserBundle\Editeur\CoucheVisuel;
 use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -165,6 +166,19 @@ class FrontSynchroniserManager {
         file_put_contents($path, Yaml::dump($metadata));
     }
 
+    public function getContentByXpath(array $metadata, $xpath)
+    {
+        foreach($metadata["dom"] as $dom)
+        {
+            if($dom["selector"] == $xpath)
+            {
+                return $metadata["content"][$dom["content"]];
+            }
+        }
+
+        return null;
+    }
+
     public function buildEditor($sourcePath)
     {
 ///
@@ -192,7 +206,9 @@ class FrontSynchroniserManager {
         }
         //
 
-        $coucheCode = new CoucheCode($containerHtml);
+        $coucheContenu = new CoucheContennu($configuration, $this);
+
+        $coucheCode = new CoucheCode($containerHtml, $coucheContenu);
 
         $coucheVisuel = new CoucheVisuel($containerHtml);
 
