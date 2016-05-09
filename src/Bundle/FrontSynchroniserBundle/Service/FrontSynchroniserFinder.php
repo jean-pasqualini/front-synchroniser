@@ -48,6 +48,7 @@ class FrontSynchroniserFinder {
 
         return array(
             "name" => $file->getFilename(),
+            'id_link' => base64_encode($file->getPathname()),
             "template" => $fsData["template"]
         );
     }

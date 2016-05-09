@@ -8,19 +8,29 @@
 
 namespace FrontSynchroniserBundle\Editeur;
 
-class CoucheVisuel {
+use FrontSynchroniserBundle\Service\FrontSynchroniserManager;
+
+class CoucheVisuel implements CoucheListenerInterface {
 
     protected $source;
 
     protected $domDocument;
 
+    protected $frontSynchroniserManager;
+
     protected $lines;
 
-    public function __construct($source)
+    protected $metadata;
+
+    public function __construct($source, $metadata, FrontSynchroniserManager $frontSynchroniserManager)
     {
         $this->source = $source;
 
         $this->domDocument = new \DOMDocument();
+
+        $this->frontSynchroniserManager = $frontSynchroniserManager;
+
+        $this->metadata = $metadata;
     }
 
     protected function getPrepend($indent)
@@ -32,6 +42,11 @@ class CoucheVisuel {
         $prepend = "<span>$prepend</span>";
 
         return $prepend;
+    }
+
+    public function getLayer()
+    {
+        return 'visuel';
     }
 
     private function domElement(\DOMElement $child, &$lines, $indent = 0)
@@ -133,5 +148,19 @@ class CoucheVisuel {
         $retour = $this->getChildren($dom->childNodes, $lines);
 
         return $retour;
+    }
+
+    public function domRender(\DOMNode $child, &$lines, $indent = 0)
+    {
+        $content = $this->frontSynchroniserManager->getContentByXpath($this->metadata, $child->getNodePath());
+
+        if($content !== null)
+        {
+            $lines[] = "<span class=''>OK</span>";
+
+            return false;
+        }
+
+        return false;
     }
 }

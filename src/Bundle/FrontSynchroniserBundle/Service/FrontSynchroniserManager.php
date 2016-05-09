@@ -11,6 +11,7 @@ namespace FrontSynchroniserBundle\Service;
 use Artack\DOMQuery\DOMQuery;
 use FrontSynchroniserBundle\Editeur\CoucheCode;
 use FrontSynchroniserBundle\Editeur\CoucheContennu;
+use FrontSynchroniserBundle\Editeur\CoucheDispatcher;
 use FrontSynchroniserBundle\Editeur\CoucheVisuel;
 use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -18,14 +19,36 @@ use Symfony\Component\Yaml\Exception\ParseException;
 use FrontSynchroniser\Render as FrontSynchroniserRender;
 use Symfony\Component\Yaml\Yaml;
 
+/**
+ * Responsable de :
+ * - Le rendu des templates statiques
+ * - La dynamisation des templates statiques
+ * - La récuperation des métadata d'un template (.fs)
+ *
+ * Class FrontSynchroniserManager
+ * @package FrontSynchroniserBundle\Service
+ */
 class FrontSynchroniserManager {
 
+    /**
+     * @var array Configuration de l'outils
+     */
     protected $configuration;
 
+    /**
+     * @var object YamlParser
+     */
     protected $yamlParser;
 
+    /**
+     * @var object Resolver de chemin de template (différe selon le framework)
+     */
     protected $pathResolver;
 
+    /**
+     * @param $configuration
+     * @param $pathResolver
+     */
     public function __construct($configuration, $pathResolver)
     {
         $this->configuration = $configuration;
@@ -35,6 +58,10 @@ class FrontSynchroniserManager {
         $this->pathResolver = $pathResolver;
     }
 
+    /**
+     * @param $sourcePath
+     * @return string
+     */
     public function compile($sourcePath)
     {
         $sourcePath = $this->pathResolver->locate($sourcePath);
@@ -57,16 +84,32 @@ class FrontSynchroniserManager {
         return $compiledPath;
     }
 
+    /**
+     * @param $sourcePath
+     * @return string
+     */
     public function getCompiledPath($sourcePath)
     {
         return $this->configuration["outputdir"].DIRECTORY_SEPARATOR.md5($sourcePath).".raw";
     }
 
+    /**
+     * La version static non dynamiser
+     *
+     * @param $configuration
+     * @return string
+     */
     protected function getStaticSource($configuration)
     {
         return file_get_contents($this->configuration["staticdir"].DIRECTORY_SEPARATOR.$configuration["template"]);
     }
 
+    /**
+     * Retourn les métadata
+     *
+     * @param $sourcePath
+     * @return null
+     */
     public function getMetadataFromPath($sourcePath)
     {
         $source = file_get_contents($sourcePath);
@@ -81,12 +124,26 @@ class FrontSynchroniserManager {
         
         return $configuration;
     }
-    
+
+    /**
+     * Retourne les érreurs rencontré pendant la génération
+     *
+     * @return array
+     */
     public function getErrors()
     {
         return array();
     }
 
+    /**
+     * Récupere le css
+     *
+     * @param \DOMNodeList $children
+     * @param $xpath
+     * @param array $css
+     * @param int $level
+     * @return null|string
+     */
     public function getCss(\DOMNodeList $children, $xpath, $css = array(), $level = 1)
     {
         foreach($children as $child)
@@ -126,6 +183,12 @@ class FrontSynchroniserManager {
         return null;
     }
 
+    /**
+     * Sauvegarde les modifications effectuer dans le template statique sous forme de .fs pour la dynamisation
+     *
+     * @param $path
+     * @param array $data
+     */
     public function saveEditor($path, array $data)
     {
         $metadata = $this->getMetadataFromPath($path);
@@ -166,6 +229,13 @@ class FrontSynchroniserManager {
         file_put_contents($path, Yaml::dump($metadata));
     }
 
+    /**
+     * Retourne le contenu d'un élement dom par son xpath
+     *
+     * @param array $metadata
+     * @param $xpath
+     * @return null
+     */
     public function getContentByXpath(array $metadata, $xpath)
     {
         foreach($metadata["dom"] as $dom)
@@ -179,45 +249,73 @@ class FrontSynchroniserManager {
         return null;
     }
 
+    /**
+     * Construit l'editeur
+     *
+     * @param $sourcePath
+     * @return array|string
+     */
     public function buildEditor($sourcePath)
     {
-///
+        // La configuration du template
         $configuration = $this->getMetadataFromPath($sourcePath);
 
+        // Si la configuration n'est pas disponible on retourne une erreur
         if($configuration === null) return "[ERROR COMPILATED]";
 
+        // La version static non dynamiser
         $html = $this->getStaticSource($configuration);
 
+        // On charge la version static dans FluentDom pour la manipuler
         $htmlObject = new \FluentDOM\Document;
-
         $htmlObject->loadHTML($html);
 
+        // Si on dynamise tout le template
         if($configuration["container"] === null)
         {
+            // Alors le container html est le template
             $containerHtml = $htmlObject->saveHTML();
         }
         else
         {
+            // Si on dynamise une partie du template, alors le container html est une partie du template
             $containerObject = $htmlObject->find($configuration["container"]);
-
             $containerObject->contentType = "text/html";
-
             $containerHtml = $containerObject->html();
         }
-        //
 
+        // On instancie la couche de contenu
         $coucheContenu = new CoucheContennu($configuration, $this);
 
-        $coucheCode = new CoucheCode($containerHtml, $coucheContenu);
+        // On instancie la couche visuel
+        $coucheVisuel = new CoucheVisuel($containerHtml, $configuration, $this);
 
-        $coucheVisuel = new CoucheVisuel($containerHtml);
+        $coucheDispatcher = new CoucheDispatcher($configuration, $this);
 
+        $coucheDispatcher->addCoucheListener($coucheContenu);
+
+        $coucheDispatcher->addCoucheListener($coucheVisuel);
+
+        // On instancie la couche de code
+        $coucheCode = new CoucheCode($containerHtml, $coucheDispatcher);
+
+        // On retourn les différentes couches qui constitue l'éditeur
         return array(
             "coucheCode" => $coucheCode,
-            "coucheVisuel" => $coucheVisuel
+            "coucheDispatcher" => $coucheDispatcher
         );
     }
 
+    /**
+     * Rend le template dynamiser à partir de :
+     * - Le template static
+     * - La définition des contenu à injecter sous forme de fichier de configuration (.fs.yml)
+     *
+     * @param $sourcePath
+     * @param bool|false $edit
+     * @param bool|false $js
+     * @return mixed|string
+     */
     public function render($sourcePath, $edit = false, $js = false)
     {
         $configuration = $this->getMetadataFromPath($sourcePath);

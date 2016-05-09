@@ -14,7 +14,7 @@ class CoucheCode {
 
     protected $coucheContenu;
 
-    public function __construct($source, CoucheContennu $coucheContennu)
+    public function __construct($source, CoucheDispatcher $coucheContennu)
     {
         $this->source = $source;
 

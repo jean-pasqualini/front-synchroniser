@@ -11,11 +11,16 @@ namespace FrontSynchroniserBundle\Editeur;
 
 use FrontSynchroniserBundle\Service\FrontSynchroniserManager;
 
-class CoucheContennu {
+class CoucheContennu implements CoucheListenerInterface {
 
     protected $metadata;
 
     protected $frontSynchroniserManager;
+
+    public function getLayer()
+    {
+        return 'default';
+    }
 
     public function __construct($metadata, FrontSynchroniserManager $frontSynchroniserManager)
     {

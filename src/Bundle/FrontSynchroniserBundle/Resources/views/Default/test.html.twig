@@ -5,9 +5,11 @@
         <code class="couche-code">
             {{ coucheCode.render() | raw }}
         </code>
-        <div class="couche-visuel">
-            {{ coucheVisuel.render() | raw }}
-        </div>
+        {% for couche in coucheDispatcher.getCoucheCollection() %}
+            <div class="couche-{{ couche.getLayer() }}">
+                {{ couche.render() | raw }}
+            </div>
+        {% endfor %}
     </div>
 
 

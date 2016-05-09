@@ -56,6 +56,10 @@ class DefaultController extends Controller
     
     public function editAction(Request $request, $name)
     {
+        if(!empty($name)) {
+            $name = base64_decode($name);
+        }
+
         /** @var FrontSynchroniserManager $fsManager */
         $fsManager = $this->get("front_synchroniser.manager");
 
