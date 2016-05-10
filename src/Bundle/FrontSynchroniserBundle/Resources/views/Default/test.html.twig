@@ -2,14 +2,7 @@
 
 {% block frontsynchroniser_body %}
     <div class="editor">
-        <code class="couche-code">
-            {{ coucheCode.render() | raw }}
-        </code>
-        {% for couche in coucheDispatcher.getCoucheCollection() %}
-            <div class="couche-{{ couche.getLayer() }}">
-                {{ couche.render() | raw }}
-            </div>
-        {% endfor %}
+        {{ layerRender.renderCollection() }}
     </div>
 
 

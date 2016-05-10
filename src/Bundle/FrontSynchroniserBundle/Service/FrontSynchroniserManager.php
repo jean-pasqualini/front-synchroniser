@@ -13,6 +13,8 @@ use FrontSynchroniserBundle\Editeur\CoucheCode;
 use FrontSynchroniserBundle\Editeur\CoucheContennu;
 use FrontSynchroniserBundle\Editeur\CoucheDispatcher;
 use FrontSynchroniserBundle\Editeur\CoucheVisuel;
+use FrontSynchroniserBundle\Editeur\Layer\LayerRegistry;
+use FrontSynchroniserBundle\Editeur\Layer\LayerRender;
 use Symfony\Component\CssSelector\CssSelector;
 use Symfony\Component\Yaml\Exception\ParseException;
 
@@ -292,6 +294,8 @@ class FrontSynchroniserManager {
 
         $coucheDispatcher = new CoucheDispatcher($configuration, $this);
 
+        $layerRender = new LayerRender(new LayerRegistry());
+
         $coucheDispatcher->addCoucheListener($coucheContenu);
 
         $coucheDispatcher->addCoucheListener($coucheVisuel);
@@ -302,7 +306,8 @@ class FrontSynchroniserManager {
         // On retourn les différentes couches qui constitue l'éditeur
         return array(
             "coucheCode" => $coucheCode,
-            "coucheDispatcher" => $coucheDispatcher
+            "coucheDispatcher" => $coucheDispatcher,
+            'layerRender' => $layerRender
         );
     }
 
