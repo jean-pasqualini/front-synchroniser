@@ -4,4 +4,6 @@ debug_frontsynchroniser_showtemplate:
     
 debug_frontsynchroniser_edittemplate:
     path:     /debug/frontsynchroniser/edit/{name}
-    defaults: { _controller: FrontSynchroniserBundle:Default:edit, name: null }    
+    defaults: { _controller: FrontSynchroniserBundle:Default:edit, name: null }
+    requirements:
+        name: '.+'
